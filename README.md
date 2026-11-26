@@ -1,18 +1,18 @@
-\# Bristol-meat-mystery
+# Bristol-meat-mystery
 
 
 
-\## Software
+## Software
 
-\- Git Bash (Windows): bash, unzip, sed
+- Git Bash (Windows): bash, unzip, sed
 
-\- R and RStudio: ape, ggplot2, cluster, DECIPHER (installed with BiocManager)
+- R and RStudio: ape, ggplot2, cluster, DECIPHER (installed with BiocManager)
 
-\- Python 3 (VS Code): biopython
+- Python 3 (VS Code): biopython
 
 
 
-\## Step 1 – Prepare the data (Bash)
+## Step 1 – Prepare the data (Bash)
 
 Run in Git Bash:
 
@@ -30,14 +30,12 @@ bash scripts/1-PrepareData.sh
 
 The script copies the FASTA files from the 8 outlet folders into one folder
 
-(`working\_sequences`) and adds the outlet name to each header,
+(`working_sequences`) and adds the outlet name to each header,
 
-e.g. `>seq013` becomes `>outlet\_01|seq013`. The DNA sequences are not changed.
-
+e.g. `>seq013` becomes `>outlet_01|seq013`. The DNA sequences are not changed.
 
 
 Check (should print 100):
-
 
 
 ```
@@ -47,24 +45,23 @@ cat working\_sequences/\*.fasta | grep -c ">"
 ```
 
 
+## Step 2 – Sequence groups (R)
 
-\## Step 2 – Sequence groups (R)
-
-Open `scripts/2-SequenceGroups.Rmd` in RStudio and run all chunks (or Knit).
-
+Open `scripts 2-SequenceGroups.Rmd` in RStudio and run all chunks (or Knit).
 
 
-\- The sequences have different lengths, so they are aligned first with `AlignSeqs()` (DECIPHER).
 
-\- Pairwise distances: `dist.dna()` with the JC69 model.
+- The sequences have different lengths, so they are aligned first with `AlignSeqs()` (DECIPHER).
 
-\- PCoA: `cmdscale()` with 10 axes.
+- Pairwise distances: `dist.dna()` with the JC69 model.
 
-\- k-means on the 10 PCoA axes (`nstart = 25`) for k = 2 to 10.
+- PCoA: `cmdscale()` with 10 axes.
 
-\- The number of groups is the k with the highest mean silhouette width.
+- k-means on the 10 PCoA axes (`nstart = 25`) for k = 2 to 10.
 
-\- `set.seed(123)` is used so k-means gives the same result each time.
+- The number of groups is the k with the highest mean silhouette width.
+
+- `set.seed(123)` is used so k-means gives the same result each time.
 
 
 
@@ -72,7 +69,7 @@ Output: `pcoa\_by\_outlet.png`, `pcoa\_by\_group.png`
 
 
 
-\## Step 3 – Representative sequences (R)
+## Step 3 – Representative sequences (R)
 
 This is the last section of `2-SequenceGroups.Rmd`.
 
@@ -88,7 +85,7 @@ Output: `representatives.fasta`
 
 
 
-\## Step 4 – ORF prediction and translation (Python)
+## Step 4 – ORF prediction and translation (Python)
 
 Run from the `scripts` folder:
 
@@ -106,13 +103,13 @@ python 4-ORFprediction.py
 
 Based on the longest ORF code from the practical, with these changes:
 
-\- all 6 reading frames are checked (3 forward and 3 reverse)
+- all 6 reading frames are checked (3 forward and 3 reverse)
 
-\- the bacterial genetic code is used (`table=11`)
+- the bacterial genetic code is used (`table=11`)
 
-\- the ORF starts at the first start codon (ATG, GTG or TTG)
+- the ORF starts at the first start codon (ATG, GTG or TTG)
 
-\- the longest ORF is selected and translated
+- the longest ORF is selected and translated
 
 
 
