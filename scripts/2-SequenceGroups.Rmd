@@ -60,6 +60,20 @@ p1 <- ggplot(pcoa_df, aes(x = PCoA1, y = PCoA2, colour = Outlet)) +
 p1
 ggsave("pcoa_by_outlet.png", p1)
 ```
+#Groups 3, 4 and 5 separate on axes 3 and 4, supporting k=5 (the highest mean silhouette width, 0.811)
+
+
+```{r}
+p3 <- ggplot(pcoa_df, aes(x = PCoA3, y = PCoA4, colour = Group)) +
+  geom_point(size = 3, alpha = 0.9) +
+  labs(x = paste0("PCoA3 (", round(variance[3], 1), "%)"),
+       y = paste0("PCoA4 (", round(variance[4], 1), "%)"),
+       title = "PCoA axes 3 and 4 coloured by group") +
+  theme_classic()
+p3
+```
+
+
 
 # Silhouette analysis
 
@@ -109,4 +123,27 @@ ggsave("pcoa_by_group.png", p2)
 
 ```{r}
 table(pcoa_df$Outlet, pcoa_df$Group)
+```
+
+
+# Representative sequences
+
+For each group I chose the sequence with the smallest average distance to the other sequences in its group.
+
+```{r}
+dist_matrix <- as.matrix(jc_dist)
+
+representatives <- c()
+
+for (g in levels(pcoa_df$Group)) {
+  members <- rownames(pcoa_df)[pcoa_df$Group == g]
+  mean_dist <- rowMeans(dist_matrix[members, members])
+  representatives[g] <- names(which.min(mean_dist))
+}
+
+data.frame(Group = names(representatives),
+           Sequence = representatives,
+           Length = width(seqs[representatives]))
+
+writeXStringSet(seqs[representatives], "representatives.fasta")
 ```
