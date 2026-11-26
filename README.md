@@ -1,24 +1,24 @@
-\# Bristol-meat-mystery
+# Bristol-meat-mystery
 
+Software: Git Bash (Windows) – uses bash, unzip and sed.
 
-
-\## Step 1 – Prepare the data
+## Step 1 – Prepare the data
 
 Run in Git Bash:
 
-unzip data/sequences\_by\_outlet.zip -d data/
+unzip data/sequences_by_outlet.zip -d data/
 
-bash scripts/01\_prepare\_data.sh
+bash scripts/01_prepare_data.sh
 
 
 
 The script copies the FASTA files from the 8 outlet folders into one folder
 
-(working\_sequences) and adds the outlet name to each header,
+(working_sequences) and adds the outlet name to each header,
 
-e.g. >seq013 becomes >outlet\_01|seq013. The DNA sequences are not changed.
+e.g. >seq013 becomes >outlet_01|seq013. The DNA sequences are not changed.
 
 
 
-Check: cat working\_sequences/\*.fasta | grep -c ">"   (should print 100)
+Check: cat working_sequences/*.fasta | grep -c ">"   (should print 100)
 
