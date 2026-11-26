@@ -65,7 +65,7 @@ Open `scripts 2-SequenceGroups.Rmd` in RStudio and run all chunks (or Knit).
 
 
 
-Output: `pcoa_by_outlet.png`, `pcoa_by_group.png`
+Output (saved in scripts): `pcoa_by_outlet.png`, `pcoa_by_group.png`
 
 
 
@@ -81,7 +81,7 @@ distance to the other sequences in its group.
 
 
 
-Output: `representatives.fasta`
+Output(saved in scripts): `representatives.fasta`
 
 
 
@@ -113,5 +113,5 @@ Based on the longest ORF code from the practical, with these changes:
 
 
 
-Output: `representative_proteins.fasta`
+Output(saved in scripts): `representative_proteins.fasta`
 
