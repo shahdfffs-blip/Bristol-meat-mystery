@@ -1,0 +1,112 @@
+---
+title: Step 2 - Sequence groups"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Preparations
+
+Load the necessary libraries
+
+```{r libraries}
+library(ape)          #for DNA sequences and distances
+library(ggplot2)      #for plots
+library(cluster)      #for silhouette analysis
+library(DECIPHER)     #for aligning sequences
+```
+
+# Read and align sequences
+
+The sequences are different lengths, so I aligned them before calculating distances.
+
+```{r}
+files <- list.files("../working_sequences", full.names = TRUE)
+seqs <- readDNAStringSet(files)
+
+aligned <- AlignSeqs(seqs)
+dna_alignment <- as.DNAbin(aligned)
+```
+
+# Pairwise distances
+
+```{r}
+jc_dist <- dist.dna(dna_alignment, model = "JC69")
+```
+
+# PCoA
+
+```{r}
+pcoa_result <- cmdscale(jc_dist, k = 10, eig = TRUE)
+
+pcoa_df <- as.data.frame(pcoa_result$points)
+colnames(pcoa_df) <- paste0("PCoA", 1:10)
+
+eig <- pcoa_result$eig
+variance <- 100 * eig / sum(eig[eig > 0])
+
+# get outlet name from the header (before the |)
+pcoa_df$Outlet <- sub("\\|.*", "", rownames(pcoa_df))
+```
+
+```{r}
+p1 <- ggplot(pcoa_df, aes(x = PCoA1, y = PCoA2, colour = Outlet)) +
+  geom_point(size = 3, alpha = 0.8) +
+  labs(x = paste0("PCoA1 (", round(variance[1], 1), "%)"),
+       y = paste0("PCoA2 (", round(variance[2], 1), "%)"),
+       title = "PCoA coloured by outlet") +
+  theme_classic()
+p1
+ggsave("pcoa_by_outlet.png", p1)
+```
+
+# Silhouette analysis
+
+```{r}
+set.seed(123)
+pcoa_coords <- pcoa_df[, paste0("PCoA", 1:10)]
+pcoa_dist <- dist(pcoa_coords)
+
+k_values <- 2:10
+mean_silhouette <- numeric(length(k_values))
+
+for (i in seq_along(k_values)) {
+  km_test <- kmeans(pcoa_coords, centers = k_values[i], nstart = 25)
+  sil <- silhouette(km_test$cluster, pcoa_dist)
+  mean_silhouette[i] <- mean(sil[, "sil_width"])
+}
+
+data.frame(k = k_values, mean_silhouette = round(mean_silhouette, 3))
+
+plot(k_values, mean_silhouette, type = "b", pch = 19,
+     xlab = "Number of clusters (k)", ylab = "Mean silhouette width")
+```
+
+# k-means
+
+```{r}
+optimal_k <- k_values[which.max(mean_silhouette)]
+optimal_k
+
+set.seed(123)
+km_optimal <- kmeans(pcoa_coords, centers = optimal_k, nstart = 25)
+pcoa_df$Group <- factor(km_optimal$cluster)
+```
+
+```{r}
+p2 <- ggplot(pcoa_df, aes(x = PCoA1, y = PCoA2, colour = Group)) +
+  geom_point(size = 3, alpha = 0.9) +
+  labs(x = paste0("PCoA1 (", round(variance[1], 1), "%)"),
+       y = paste0("PCoA2 (", round(variance[2], 1), "%)"),
+       title = "PCoA coloured by group") +
+  theme_classic()
+p2
+ggsave("pcoa_by_group.png", p2)
+```
+
+# Groups vs outlets
+
+```{r}
+table(pcoa_df$Outlet, pcoa_df$Group)
+```
