@@ -20,7 +20,7 @@ Run in Git Bash:
 
 ```
 
-unzip data/sequences\_by\_outlet.zip -d data/
+unzip data/sequences_by_outlet.zip -d data/
 
 bash scripts/1-PrepareData.sh
 
@@ -40,7 +40,7 @@ Check (should print 100):
 
 ```
 
-cat working\_sequences/\*.fasta | grep -c ">"
+cat working_sequences/*.fasta | grep -c ">"
 
 ```
 
@@ -65,7 +65,7 @@ Open `scripts 2-SequenceGroups.Rmd` in RStudio and run all chunks (or Knit).
 
 
 
-Output: `pcoa\_by\_outlet.png`, `pcoa\_by\_group.png`
+Output: `pcoa_by_outlet.png`, `pcoa_by_group.png`
 
 
 
@@ -113,5 +113,5 @@ Based on the longest ORF code from the practical, with these changes:
 
 
 
-Output: `representative\_proteins.fasta`
+Output: `representative_proteins.fasta`
 
