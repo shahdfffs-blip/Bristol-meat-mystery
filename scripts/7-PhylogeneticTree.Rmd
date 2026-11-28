@@ -1,0 +1,88 @@
+---
+title: "Step 7 - Phylogenetic tree"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Preparations
+
+Load the necessary libraries
+
+```{r libraries}
+library(ape)          #for trees, rooting and plotting
+library(phangorn)     #for protein distances and bootstrap
+```
+
+# Read the alignment
+
+The trimmed alignment from Step 6 (MUSCLE + Gblocks on Phylogeny.fr).
+
+```{r readData}
+aln <- read.phyDat("alignment_clean.aln",
+                   format = "fasta", type = "AA")
+aln
+```
+
+# Neighbour-joining tree
+
+The sequences are proteins, so I used a protein substitution model (JTT)
+instead of the DNA model (JC69) used in the practical.
+
+```{r nj}
+dm <- dist.ml(aln, model = "JTT")
+nj_tree <- nj(dm)
+
+# set negative branch lengths to 0 (as in the Week 3 practical)
+nj_tree$edge.length[nj_tree$edge.length < 0] <- 0
+```
+
+# Root the tree with the outgroup
+
+```{r root}
+OG <- "OUTGROUP_Escherichia_coli_536_Q0TA78.1"
+rooted_tree <- root(nj_tree, outgroup = OG, resolve.root = TRUE)
+```
+
+# Bootstrap support
+
+100 bootstrap replicates: the alignment columns are resampled and a new NJ tree
+is made each time. The number on a node is how many of the 100 trees had that group.
+
+```{r bootstrap}
+set.seed(123)
+bs <- bootstrap.phyDat(aln, FUN = function(x) nj(dist.ml(x, model = "JTT")), bs = 100)
+support <- prop.clades(rooted_tree, bs, rooted = FALSE)
+```
+
+# Plot the tree
+
+Representative sequences are shown in red.
+
+```{r plot, fig.width=9, fig.height=8}
+rooted_tree$tip.label <- gsub("_", " ", rooted_tree$tip.label)
+tip_colours <- ifelse(grepl("^Group", rooted_tree$tip.label), "red", "black")
+
+plot(rooted_tree, cex = 0.6, no.margin = TRUE, tip.color = tip_colours)
+nodelabels(support, frame = "none", cex = 0.5, adj = c(1.2, -0.3))
+add.scale.bar(cex = 0.6)
+
+png("tree.png", width = 2000, height = 1800, res = 250)
+plot(rooted_tree, cex = 0.6, no.margin = TRUE, tip.color = tip_colours)
+nodelabels(support, frame = "none", cex = 0.5, adj = c(1.2, -0.3))
+add.scale.bar(cex = 0.6)
+dev.off()
+
+write.tree(rooted_tree, "tree.nwk")
+```
+
+# References
+
+```{r references}
+pkgs <- c("ape", "phangorn")
+for (p in pkgs) {
+  cat("\n----------\n")
+  print(citation(package = p), bibtex = F)
+}
+```
