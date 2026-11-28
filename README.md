@@ -25,8 +25,8 @@ scripts/
     4-ORFprediction.py           Python script
     representative_proteins.fasta  translated ORFs of the 5 representatives
   Step 5 (manual, NCBI)
-    blast/nr/                    BLASTP results against nr (CSV)
-    blast/outgroup/              BLASTP results against Swiss-Prot, limited to E. coli (CSV)
+    BLASTresults/nr/                    BLASTP results against nr (CSV)
+    BLASTresults/OutGroup/              BLASTP results against Swiss-Prot, limited to E. coli (CSV)
     references.fasta             20 references + outgroup downloaded from NCBI
   Step 6
     6-CleanHeaders.py            Python script
@@ -124,14 +124,14 @@ Open `scripts/7-PhylogeneticTree.Rmd` in RStudio and run all chunks.
 
 ### Step 5 – BLASTP (NCBI, 26–27 November 2026)
 1. BLASTP of the 5 proteins in `representative_proteins.fasta` against **nr**,
-   Max target sequences = 5000. CSV files saved in `scripts/blast/nr/`.
+   Max target sequences = 5000. CSV files saved in `scripts/BLASTresults/nr/`.
 2. Four references were chosen for each representative using these cut-offs:
    E-value ≤ 1e-5, query coverage ≥ 97%, percent identity ≥ 77%.
    Partial sequences, MAGs, unnamed species ("sp.") and hits with doubtful taxonomy were excluded.
    For breadth: closest named species, another species of the same or closest genus,
    another genus of the same family, and a more distant genus.
 3. Outgroup: BLASTP of the 5 proteins against **UniProtKB/Swiss-Prot**, Organism =
-   *Escherichia coli* (taxid:562). Chosen: Q0TA78.1 (*E. coli* 536). CSV files saved in `scripts/blast/outgroup/`.
+   *Escherichia coli* (taxid:562). Chosen: Q0TA78.1 (*E. coli* 536). CSV files saved in `scripts/BLASTresults/OutGroup/`.
 4. The 21 accessions were downloaded in FASTA format from NCBI Protein (Send to > File > FASTA).
    HHA6352772.1 and MGP5079620.1 (WGS records) were downloaded separately.
    MGO1758743.1 was replaced by WP_224183614.1 (*Macrococcus armenti*) because it was a MAG.
