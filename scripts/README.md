@@ -8,30 +8,39 @@ the sequences encode, which taxa the groups belong to, and which outlets may be 
 
 ```
 data/
-  sequences_by_outlet.zip        original data (8 outlet folders, 100 FASTA files)
-working_sequences/               Step 1 output (100 FASTA files)
+  sequences_by_outlet.zip        original data from the assignment
+  sequences_by_outlet/           the same data after unzipping (8 outlet folders, 100 FASTA files)
+
+working_sequences/               Step 1 output (100 FASTA files with the outlet name in the header)
+
 scripts/
-  1-PrepareData.sh               Step 1 (Bash)
-  2-SequenceGroups.Rmd           Steps 2 and 3 (R)
-  4-ORFprediction.py             Step 4 (Python)
-  6-CleanHeaders.py              Step 6, combine sequences and clean headers (Python)
-  7-PhylogeneticTree.Rmd         Step 7 (R)
-  pcoa_by_outlet.png             Step 2 output (Figure 1)
-  pcoa_by_group.png              Step 2 output (Figure 2)
-  representatives.fasta          Step 3 output (DNA of the 5 representatives)
-  representative_proteins.fasta  Step 4 output (translated ORFs)
-  blast/nr/                      Step 5, BLASTP results against nr (CSV)
-  blast/outgroup/                Step 5, BLASTP results against Swiss-Prot, limited to E. coli (CSV)
-  references.fasta               Step 5, 20 references + outgroup downloaded from NCBI
-  all_sequences.fasta            Step 6 output (26 sequences with clean headers)
-  alignment.aln                  Step 6, MSA before trimming
-  alignment_clean.aln            Step 6, MSA after Gblocks
-  tree.png                       Step 7 output, rooted tree (Figure 3)
-  tree.nwk                       Step 7 output, rooted tree in Newick format
+  Step 1
+    1-PrepareData.sh             Bash script
+  Steps 2 and 3
+    2-SequenceGroups.Rmd         R script
+    pcoa_by_outlet.png           Figure 1
+    pcoa_by_group.png            Figure 2
+    representatives.fasta        DNA of the 5 representative sequences
+  Step 4
+    4-ORFprediction.py           Python script
+    representative_proteins.fasta  translated ORFs of the 5 representatives
+  Step 5 (manual, NCBI)
+    blast/nr/                    BLASTP results against nr (CSV)
+    blast/outgroup/              BLASTP results against Swiss-Prot, limited to E. coli (CSV)
+    references.fasta             20 references + outgroup downloaded from NCBI
+  Step 6
+    6-CleanHeaders.py            Python script
+    all_sequences.fasta          26 sequences with clean headers
+    alignment.aln                MSA before trimming (Phylogeny.fr, MUSCLE)
+    alignment_clean.aln          MSA after trimming (Gblocks)
+  Step 7
+    7-PhylogeneticTree.Rmd       R script
+    tree.png                     Figure 3, rooted tree
+    tree.nwk                     rooted tree in Newick format
 ```
 
-All scripts and their outputs are kept in the `scripts` folder, because each step reads the
-output of the step before it from the same folder.
+All files in `scripts` are in one folder (the list above is only grouped by step), because each
+step reads the output of the step before it from the same folder.
 
 ## Software
 
